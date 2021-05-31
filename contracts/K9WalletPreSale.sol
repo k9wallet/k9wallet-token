@@ -50,7 +50,7 @@ contract K9WalletTokenPreSale {
         require(!presaleEnded, "Presale ended");
         require(block.timestamp < presaleEnd, "Presale time's up");
 
-        uint256 remaining = _k9WalletToken.balanceOf(address(this));
+        //uint256 remaining = _k9WalletToken.balanceOf(address(this));
 
 
         
@@ -66,7 +66,7 @@ contract K9WalletTokenPreSale {
         
     }
 
-    function start(uint256 _endDate) external {
+    function start() external {
         require(msg.sender == owner, "Only K9 Dev Can Start");
         _initialAvailable = _k9WalletToken.balanceOf(address(this));
         presaleStarted = true;
