@@ -8,14 +8,10 @@ import '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol';
 
 //K9WalletTokenPreSale presale contract
 contract K9WalletTokenPreSale {
-    uint256 public immutable maxPresalePercentage = 70; // leave at least 30% of tokens for Liquidity
-    uint256 private _initialAvailable;
-    
     uint256 public immutable minPerUser;
     uint256 public immutable maxPerUser;
-    uint256 public immutable presaleEnd;
+    uint256 public immutable presaleEndTime;
 
-    uint256 constant failSafeTime = 1 weeks;
     address public owner;
     
     IERC20 private _k9WalletToken;
@@ -30,14 +26,13 @@ contract K9WalletTokenPreSale {
     ) {
         minPerUser = 0.05*1e18; // 0.05 ETH  minimum
         maxPerUser = 10*1e18;// 10 ETH max
-        presaleEnd = 1625077281; // GMT June 30, 2021 6:21:21 PM
+        presaleEndTime = 1625077281; // GMT June 30, 2021 6:21:21 PM
         owner = _owner;
         _k9WalletToken = _token;
         _rate = 7000000; // 7 million tokens per 1 ETH
     }
 
     bool presaleEnded;
-    bool presaleFailed;
     bool presaleStarted;
 
     // list of user balances
@@ -48,27 +43,28 @@ contract K9WalletTokenPreSale {
     receive() external payable {
         require(presaleStarted, "Presale not started, chill out");
         require(!presaleEnded, "Presale ended");
-        require(block.timestamp < presaleEnd, "Presale time's up");
-
-        //uint256 remaining = _k9WalletToken.balanceOf(address(this));
-
-
+        require(block.timestamp < presaleEndTime, "Presale time's up");
         
-        uint256 amount = msg.value;
+        uint256 amount = msg.value + balances[msg.sender];
         require(amount >= minPerUser, "Min not met");
-        require(amount <= maxPerUser, "Max sale reached");
+        require(amount <= maxPerUser, "Max Tokens per wallet reached");
         
-        
-        uint256 tokens = getTokenAmount(amount);
+        uint256 tokens = getTokenAmount(msg.value);
+
+        checkTokenSufficiency(tokens);
+
+        balances[msg.sender] = amount;
         
         emit TokensPurchased(msg.sender, msg.sender, amount, tokens);
-        deliverTokens(msg.sender, tokens);
-        
+        deliverTokens(msg.sender, tokens); 
+    }
+
+    function checkTokenSufficiency(uint256 toPurchase) private view {
+        require(remaining() >= toPurchase, "wew! looks like tokens are running out");
     }
 
     function start() external {
-        require(msg.sender == owner, "Only K9 Dev Can Start");
-        _initialAvailable = _k9WalletToken.balanceOf(address(this));
+        require(msg.sender == owner, "Only Dev Can Start");
         presaleStarted = true;
     }
 
@@ -87,33 +83,28 @@ contract K9WalletTokenPreSale {
         return address(this).balance;
     }
 
-    // withdraw ETH from contract
-    // return false if nothing to do
-    function withdraw() external returns (bool) {
-        if (!presaleEnded) {
-            // end and fail presale if failsafe time passed
-            if (block.timestamp > presaleEnd + failSafeTime) {
-                presaleEnded = true;
-                presaleFailed = true;
-                // don't return true, you can withdraw in this call
-            }
-        }
-        // owner withdraw - presale succeed ?
-        else if (msg.sender == owner && !presaleFailed) {
+    // remaining Tokens on this contract
+    function remaining() public view returns (uint256) {
+        return _k9WalletToken.balanceOf(address(this));
+    }
+
+    // If we have a smart contract ready for UniswapV2Router02 
+    // we'll send balances to that contract address, otherwise widthdaw to owner
+    function finalize(address receiver) external {
+        require(msg.sender == owner, "Only K9 Dev Can End this");
+        presaleEnded = true;
+
+        if (receiver == address(0)) {
+            send(owner, collected());
+            SafeERC20.safeTransfer(_k9WalletToken, owner, remaining());
+        } else {
+            uint256 ninetyPercent = SafeMath.div(SafeMath.mul(collected(), 90), 100);
+            // send 90% into liquidity
+            send(receiver, ninetyPercent);
+            // 10% developer funds
             send(owner, address(this).balance);
-            return true;
+            SafeERC20.safeTransfer(_k9WalletToken, receiver, remaining());
         }
-
-        // presale failed, withdraw to calling user
-        if (presaleFailed) {
-            uint256 amount = balances[msg.sender];
-            balances[msg.sender] = 0;
-            send(msg.sender, amount);
-            return true;
-        }
-
-        // do nothing
-        return false;
     }
     
     function getTokenAmount(uint256 weiAmount) internal view returns (uint256) {
@@ -131,7 +122,11 @@ contract K9WalletTokenPreSale {
         require(success, "ETH send failed");
     }
 
-    // withdraw any ERC20 token send accidentally on this contract address to contract owner
+    function isOpen() public view returns (bool) {
+        return !presaleEnded && presaleStarted && block.timestamp < presaleEndTime;
+    }
+
+    // withdraw ERC20 tokens inclusing remaining K9 Wallet Tokens
     function withdrawAnyERC20(IERC20 token) external {
         uint256 amount = token.balanceOf(address(this));
         require(amount > 0, "No tokens to withdraw");
