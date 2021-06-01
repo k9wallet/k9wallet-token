@@ -60,7 +60,7 @@ contract K9WalletTokenPreSale {
     }
 
     function checkTokenSufficiency(uint256 toPurchase) private view {
-        require(remaining() >= toPurchase, "wew! looks like tokens are running out");
+        require(remaining() >= toPurchase, "Insufficient Tokens avaialable");
     }
 
     function start() external {
@@ -88,23 +88,26 @@ contract K9WalletTokenPreSale {
         return _k9WalletToken.balanceOf(address(this));
     }
 
-    // If we have a smart contract ready for UniswapV2Router02 
-    // we'll send balances to that contract address, otherwise widthdaw to owner
-    function finalize(address receiver) external {
-        require(msg.sender == owner, "Only K9 Dev Can End this");
+    function finalize() external {
+        require(msg.sender == owner, "Only Dev Can End this");
         presaleEnded = true;
+        withdraw(owner);
+    }
 
-        if (receiver == address(0)) {
-            send(owner, collected());
-            SafeERC20.safeTransfer(_k9WalletToken, owner, remaining());
-        } else {
-            uint256 ninetyPercent = SafeMath.div(SafeMath.mul(collected(), 90), 100);
-            // send 90% into liquidity
-            send(receiver, ninetyPercent);
-            // 10% developer funds
-            send(owner, address(this).balance);
-            SafeERC20.safeTransfer(_k9WalletToken, receiver, remaining());
-        }
+    // If we have a smart contract ready for liquidity 
+    // we'll send balances to that contract address
+    function finalizeWithContractAddress(address receiver) external {
+        require(msg.sender == owner, "Only Dev Can End this");
+        presaleEnded = true;
+        uint256 tenPercent = SafeMath.div(SafeMath.mul(collected(), 10), 100);
+        // send 10% to cover dev expenses
+        send(owner, tenPercent);
+        withdraw(receiver);
+    }
+
+    function withdraw(address receiver) private {
+        send(receiver, collected());
+        SafeERC20.safeTransfer(_k9WalletToken, receiver, remaining());
     }
     
     function getTokenAmount(uint256 weiAmount) internal view returns (uint256) {

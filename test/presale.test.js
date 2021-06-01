@@ -4,7 +4,7 @@ const truffleAssert = require('truffle-assertions');
 
 contract('K9WalletTokenPreSale', accounts => {
 
-  const preSaleAmount = '1400000000';
+  const preSaleAmount = '100000000';
   let token;
   let preSale;
 
@@ -21,7 +21,7 @@ contract('K9WalletTokenPreSale', accounts => {
   });
 
   it("should reject non-owner from starting", async () => {
-    await truffleAssert.reverts(preSale.start({from: accounts[2] }), "Only K9 Dev Can Start")
+    await truffleAssert.reverts(preSale.start({from: accounts[2] }), "Only Dev Can Start")
   });
 
   it("should reject transaction, presale not started", async () => {
@@ -94,5 +94,90 @@ contract('K9WalletTokenPreSale', accounts => {
 
     assert.equal(account3Balance.toString(), web3.utils.toWei(threeMill));
   });
+
+  it("should transfer 70 million tokens to buyer 4", async () => {
+
+    const threeMill = '70000000';
+    
+
+    await web3.eth.sendTransaction({
+        from: accounts[4], 
+        to: preSale.address, 
+        value: web3.utils.toWei('10')
+    });
+
+    const account4Balance = await token.balanceOf(accounts[4]);
+
+    assert.equal(account4Balance.toString(), web3.utils.toWei(threeMill));
+  });
+
+  it("should reject buyer 4, max tokens purchased", async () => {
+    await truffleAssert.reverts(
+      web3.eth.sendTransaction({
+          from: accounts[4], 
+          to: preSale.address, 
+          value: web3.utils.toWei('10') 
+      }),
+      "Max Tokens per wallet reached"
+   );
+  });
+
+  it("should reject with Insufficient Tokens", async () => {
+    await truffleAssert.reverts(
+      web3.eth.sendTransaction({
+          from: accounts[6], 
+          to: preSale.address, 
+          value: web3.utils.toWei('10') 
+      }),
+      "Insufficient Tokens avaialable"
+   );
+  });
+
+  it("should be allowed to purchase smaller mount", async () => {
+    const amount = '7000000';
+    
+    await web3.eth.sendTransaction({
+        from: accounts[6], 
+        to: preSale.address, 
+        value: web3.utils.toWei('1')
+    });
+
+    const accountBalance = await token.balanceOf(accounts[6]);
+
+    assert.equal(accountBalance.toString(), web3.utils.toWei(amount));
+  });
+
+  it("should reject finalizing from non-owner", async () => {
+    await truffleAssert.reverts(preSale.finalize({from: accounts[2]}), 'Only Dev Can End this');
+  });
+
+  // fucking javascript
+  it("should finalize and widthdraw funds", async () => {
+    const ownerStartingBalance = await web3.eth.getBalance(accounts[0]);
+    const collected = await preSale.collected();
+
+    console.log(web3.utils.fromWei(ownerStartingBalance))
+
+    console.log(web3.utils.fromWei(collected))
+
+    await preSale.finalizeWithContractAddress(accounts[6]);
+
+    const ownerEndingBalance = await web3.eth.getBalance(accounts[0]);
+
+    console.log(web3.utils.fromWei(ownerEndingBalance))
+
+
+    // const combinedBalance = web3.utils.fromWei(ownerStartingBalance) + web3.utils.toBN(collected);
+
+
+    // console.log(combinedBalance)
+
+  });
+
+
+  it("should be closed", async () => {
+    assert(preSale.isOpen(), false);
+  });
+
 
 });
