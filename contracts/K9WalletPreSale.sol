@@ -29,7 +29,7 @@ contract K9WalletTokenPreSale {
         presaleEndTime = 1625077281; // GMT June 30, 2021 6:21:21 PM
         owner = _owner;
         _k9WalletToken = _token;
-        _rate = 7000000; // 7 million tokens per 1 ETH
+        _rate = 10000000; // 10 million tokens per 1 ETH
     }
 
     bool presaleEnded;

@@ -1,6 +1,6 @@
 {
 	"compiler": {
-		"version": "0.8.4+commit.c7e474f2"
+		"version": "0.8.1+commit.df193b15"
 	},
 	"language": "Solidity",
 	"output": {
@@ -105,6 +105,13 @@
 				"type": "function"
 			},
 			{
+				"inputs": [],
+				"name": "finalize",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
 				"inputs": [
 					{
 						"internalType": "address",
@@ -112,7 +119,7 @@
 						"type": "address"
 					}
 				],
-				"name": "finalize",
+				"name": "finalizeWithContractAddress",
 				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
@@ -306,11 +313,11 @@
 			]
 		},
 		"contracts/K9WalletPreSale.sol": {
-			"keccak256": "0xb551b39a37bfd79302f570bc7615481a18b0dcd149c92a0423b25ea6602c2270",
+			"keccak256": "0x6135c292cbcef02fa249b65de05a830624892b4079737049ac86bef8ad2629de",
 			"license": "Unlicense",
 			"urls": [
-				"bzz-raw://ae1b3623a68a237c19407077d2775c9b4141b55d234d6e35faee59b0992122fe",
-				"dweb:/ipfs/QmaCxSgpiNEGFX5Fv257BmNHKbofxuFfh7UjuhrjEsJqA4"
+				"bzz-raw://b8d34a291a1a54dcb55c2fc702bfd4d9e242800102736f6052e58b1b3c9f18c8",
+				"dweb:/ipfs/QmVN5NCGGLF8Fx4T8iBTZEeNfNprABMbQsT2vrmuNoea1f"
 			]
 		}
 	},

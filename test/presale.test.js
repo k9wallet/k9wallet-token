@@ -4,7 +4,7 @@ const truffleAssert = require('truffle-assertions');
 
 contract('K9WalletTokenPreSale', accounts => {
 
-  const preSaleAmount = '100000000';
+  const preSaleAmount = '1000000000';
   let token;
   let preSale;
 
@@ -63,9 +63,9 @@ contract('K9WalletTokenPreSale', accounts => {
     )
   });
 
-  it("should transfer 350k tokens to buyer", async () => {
+  it("should transfer 500k tokens to buyer", async () => {
 
-    const threeK = '350000';
+    const threeK = '500000';
     
 
     await web3.eth.sendTransaction({
@@ -79,9 +79,9 @@ contract('K9WalletTokenPreSale', accounts => {
     assert.equal(account2Balance.toString(), web3.utils.toWei(threeK));
   });
 
-  it("should transfer 7 million tokens to buyer 3", async () => {
+  it("should transfer 10 million tokens to buyer 3", async () => {
 
-    const threeMill = '7000000';
+    const threeMill = '10000000';
     
 
     await web3.eth.sendTransaction({
@@ -95,9 +95,9 @@ contract('K9WalletTokenPreSale', accounts => {
     assert.equal(account3Balance.toString(), web3.utils.toWei(threeMill));
   });
 
-  it("should transfer 70 million tokens to buyer 4", async () => {
+  it("should transfer 100 million tokens to buyer 4", async () => {
 
-    const threeMill = '70000000';
+    const threeMill = '100000000';
     
 
     await web3.eth.sendTransaction({
@@ -134,7 +134,7 @@ contract('K9WalletTokenPreSale', accounts => {
   });
 
   it("should be allowed to purchase smaller mount", async () => {
-    const amount = '7000000';
+    const amount = '10000000';
     
     await web3.eth.sendTransaction({
         from: accounts[6], 
