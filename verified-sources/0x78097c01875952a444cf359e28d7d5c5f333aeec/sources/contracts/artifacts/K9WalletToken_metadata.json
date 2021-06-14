@@ -1,6 +1,6 @@
 {
 	"compiler": {
-		"version": "0.8.4+commit.c7e474f2"
+		"version": "0.8.1+commit.df193b15"
 	},
 	"language": "Solidity",
 	"output": {
@@ -322,7 +322,7 @@
 	},
 	"settings": {
 		"compilationTarget": {
-			"contracts/K9WalletToken.sol": "K9WalletToken"
+			"/verified-sources/0x78097c01875952a444cf359e28d7d5c5f333aeec/sources/contracts/K9WalletToken.sol": "K9WalletToken"
 		},
 		"evmVersion": "istanbul",
 		"libraries": {},
@@ -336,6 +336,14 @@
 		"remappings": []
 	},
 	"sources": {
+		"/verified-sources/0x78097c01875952a444cf359e28d7d5c5f333aeec/sources/contracts/K9WalletToken.sol": {
+			"keccak256": "0x7f96f39ebcfcabd74d050febdc5e8bb09a3da21e6312541990766a7228f5e240",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://0eabc869e3a29f663a865f89be3a923bd72ceeffda8bac1480bcd3e5c715ec5e",
+				"dweb:/ipfs/QmW4tnwi9489ke8Zf5A3DD9SSmutjG59EGTo9SEff9rvBz"
+			]
+		},
 		"@openzeppelin/contracts/token/ERC20/IERC20.sol": {
 			"keccak256": "0xf8e8d118a7a8b2e134181f7da655f6266aa3a0f9134b2605747139fcb0c5d835",
 			"license": "MIT",
@@ -358,14 +366,6 @@
 			"urls": [
 				"bzz-raw://fc2bfdea0d2562c76fb3c4cf70a86c6ba25c5a30e8f8515c95aafdf8383f8395",
 				"dweb:/ipfs/QmTbFya18786ckJfLYUoWau9jBTKfmWnWm5XSViWvB7PXN"
-			]
-		},
-		"contracts/K9WalletToken.sol": {
-			"keccak256": "0x38bc7f647c2bc510255e389be1dde918a216b90d1984ae82709fdc77d209a4ff",
-			"license": "MIT",
-			"urls": [
-				"bzz-raw://0b920e6353dc0cb31a63a34d4367ff43afd06d8284b01df49de6db9adb2e039a",
-				"dweb:/ipfs/QmPBMqupW4pUbWvi7qkPVgmQVs8DMxsC8oy8ahVtMTnxiE"
 			]
 		}
 	},
