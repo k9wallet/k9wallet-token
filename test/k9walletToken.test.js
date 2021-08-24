@@ -65,6 +65,8 @@ contract('K9WalletToken', accounts => {
       amount,
       "Amount wasn't correctly sent to the receiver"
     );
+
+    const trs = await meta.transferFrom(accounts[1], accounts[2], 2000);
   });
 
 });
