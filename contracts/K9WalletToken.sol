@@ -8,7 +8,7 @@ import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import '@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol';
 
 
-contract K9WalletToken is Context, IERC20, IERC20Metadata {
+contract K9WalletTokenMain is Context, IERC20, IERC20Metadata {
     mapping (address => uint256) private _balances;
 
     mapping (address => mapping (address => uint256)) private _allowances;
